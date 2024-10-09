@@ -25,6 +25,8 @@ namespace tetris
 		float angluar_damping_ratio = 0.0;
 		float angluar_frequency = 0.0;
 		float angular_goal = 0.0;
+
+		FVector offset = FVector(0,0,0);
 	};
 
 	struct current_shape_t

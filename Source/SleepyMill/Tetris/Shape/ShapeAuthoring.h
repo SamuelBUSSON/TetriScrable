@@ -25,6 +25,9 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	float angular_frequency = 100.0f;
+	
+	UPROPERTY(EditAnywhere)
+	FVector offset = FVector();
 
 	virtual void ConvertToEntityComponent(flecs::world* world, flecs::entity& entity) override;
 };

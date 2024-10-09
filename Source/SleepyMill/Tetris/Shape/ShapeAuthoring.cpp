@@ -11,8 +11,9 @@ void UShapeAuthoring::ConvertToEntityComponent(flecs::world* world, flecs::entit
 	tetris::shape_movement_params_t movement_params = {};
 	movement_params.frequency = this->frequency;
 	movement_params.damping_ratio = this->damping_ratio;
-	movement_params.spring_data.current_position = this->GetOwner()->GetActorLocation();
+	movement_params.spring_data.current_position = this->GetOwner()->GetActorLocation() + this->offset;
 	movement_params.goal = movement_params.spring_data.current_position;
+	movement_params.offset = this->offset;
 
 	movement_params.angluar_damping_ratio = this->angular_damping_ratio;
 	movement_params.frequency = this->frequency;
