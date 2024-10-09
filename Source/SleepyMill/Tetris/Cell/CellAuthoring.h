@@ -22,9 +22,18 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	float scale_frequency = 30.0f;
+	
+	UPROPERTY(EditAnywhere)
+	float mat_damping_ratio = 1.1f;
+	
+	UPROPERTY(EditAnywhere)
+	float mat_frequency = 30.0f;
 
 	UPROPERTY(EditAnywhere)
 	FComponentReference text_renderer_reference;
+	
+	UPROPERTY(EditAnywhere)
+	FComponentReference plane;
 
 	virtual void ConvertToEntityComponent(flecs::world* world, flecs::entity& entity) override;
 };

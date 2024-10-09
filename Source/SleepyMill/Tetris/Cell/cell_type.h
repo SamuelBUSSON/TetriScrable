@@ -9,6 +9,8 @@ namespace tetris
 	struct cell_t
 	{
 		TSoftObjectPtr<UTextRenderComponent> text_render = nullptr;
+		TSoftObjectPtr<UStaticMeshComponent> plane = nullptr;
+		UMaterialInstanceDynamic* dynamic_mat;
 		FString current_cell_text = FString("");
 	};
 
@@ -32,6 +34,14 @@ namespace tetris
 		spring_utils::damped_spring_float_t spring_data;
 		float damping_ratio = 0.0;
 		float frequency = 0.0;
+	};
+	
+	struct cell_material_intensity_t
+	{
+		float goal = 0.0;
+		float elapsed = 0.0;
+		float duration = 0.0;
+		float cooldown = 0.0;
 	};
 	
 	struct global_words_t

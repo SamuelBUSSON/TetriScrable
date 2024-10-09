@@ -2,6 +2,7 @@
 
 #include "shape_type.h"
 #include "Components/TextRenderComponent.h"
+#include "SleepyMill/easing.h"
 #include "SleepyMill/flecs/FlecsAuthoringComponent.h"
 #include "SleepyMill/flecs/FlecsEntity.h"
 #include "SleepyMill/flecs/ue_flecs.h"
@@ -69,6 +70,42 @@ namespace tetris
 			spring_utils::compute_spring_goal_float(cell_scale.goal, cell_scale.spring_data, cell_scale.spring_params);
 				
 			actor->SetActorScale3D(FVector::One() * cell_scale.spring_data.current_position);
+		}
+	}
+
+	void cell_material_intensity(flecs::iter it, tetris::cell_t* cell_a,
+		tetris::cell_material_intensity_t* cell_mat_a, flecs::ue::entity_link_t* link_a)
+	{
+		float dt = it.delta_time();
+		for (int idx : it)
+		{
+			cell_material_intensity_t& cell_mat_intensity = cell_mat_a[idx];
+
+			tetris::cell_t& cell = cell_a[idx];
+			UStaticMeshComponent* cell_mesh = cell.plane.Get();
+			if (cell.dynamic_mat == nullptr)
+				cell.dynamic_mat = cell_mesh->CreateDynamicMaterialInstance(0);
+
+			cell_mat_intensity.cooldown -= dt;
+			if (cell_mat_intensity.cooldown > 0)
+			{
+				continue;
+			}
+
+			cell_mat_intensity.elapsed += dt;			
+			if (cell_mat_intensity.elapsed >= cell_mat_intensity.duration)
+			{
+				cell_mat_intensity.elapsed =  cell_mat_intensity.duration;
+				cell.dynamic_mat->SetScalarParameterValue("Intensity", 1.0);
+				continue;
+			}
+			
+			float t = cell_mat_intensity.elapsed / cell_mat_intensity.duration;
+			t = 1 - easing_utils::ease_in_out_sine(t);
+
+			float value = FMath::Lerp(100, 1, t);			
+			cell.dynamic_mat->SetScalarParameterValue("Intensity", value);
+			
 		}
 	}
 }

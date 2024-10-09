@@ -141,7 +141,9 @@ namespace tetris
 		if (const Fgrid_data_t* new_loc = grid->grid.Find(new_location))
 		{
 			if (new_loc->is_occupied)
+			{
 				return find_border_cell(grid, new_location, offset);
+			}
 
 			return location;
 		}
@@ -149,14 +151,17 @@ namespace tetris
 		return  FVector(0,0,0);
 	}
 
-	FString get_word(const grid_t* grid, FVector location, FVector offset)
+	FString get_word(const grid_t* grid, FVector location, FVector offset, TArray<flecs::entity>& word_data)
 	{
 		FVector new_location = location + offset;
 
 		if (const Fgrid_data_t* new_loc = grid->grid.Find(new_location))
 		{
 			if (new_loc->is_occupied)
-				return new_loc->current_string + get_word(grid, new_location, offset);
+			{
+				word_data.Add(new_loc->occupied_entity);
+				return new_loc->current_string + get_word(grid, new_location, offset, word_data);
+			}
 
 			return "";
 		}
@@ -164,18 +169,18 @@ namespace tetris
 		return "";
 	}
 
-	FString get_left_to_right_word(const grid_t* grid, FVector location)
+	FString get_left_to_right_word(const grid_t* grid, FVector location, TArray<flecs::entity>& word_data)
 	{
 		FVector left_cell_location = find_border_cell(grid, location, FVector(0, -100, 0));
 		FString input = grid->grid[left_cell_location].current_string;
-		return  input + get_word(grid, left_cell_location, FVector(0, 100, 0));
+		return  input + get_word(grid, left_cell_location, FVector(0, 100, 0), word_data);
 	}
 	
-	FString get_up_to_down_word(const grid_t* grid, FVector location)
+	FString get_up_to_down_word(const grid_t* grid, FVector location, TArray<flecs::entity>& word_data)
 	{
 		FVector up_cell_location = find_border_cell(grid, location, FVector(0, 0, 100));
 		FString input = grid->grid[up_cell_location].current_string;
-		return  input + get_word(grid, up_cell_location, FVector(0, 0, -100));
+		return  input + get_word(grid, up_cell_location, FVector(0, 0, -100), word_data);
 	}
 
 	void check_for_words(flecs::entity shape_entity)
@@ -188,7 +193,7 @@ namespace tetris
 		const grid_t* grid = flecs_world.get<grid_t>();
 		const player_t* player = flecs_world.get<player_t>();
 
-		TSet<FString> words_found = {};
+		TMap<FString, TArray<flecs::entity>> words_found = {};
 
 		for (AActor* cell_actor: shape->cell_actor)
 		{
@@ -196,27 +201,43 @@ namespace tetris
 			FVector cell_goal_location = shape_movement->goal - relative_offset;
 			round_location(cell_goal_location);
 
-			FString word_left = get_left_to_right_word(grid, cell_goal_location);
-			FString word_down = get_up_to_down_word(grid, cell_goal_location);
+			TArray<flecs::entity> array_left;
+			TArray<flecs::entity> array_down;
+			FString word_left = get_left_to_right_word(grid, cell_goal_location, array_left);
+			FString word_down = get_up_to_down_word(grid, cell_goal_location, array_down);
 
-			words_found.Add(word_left);
-			words_found.Add(word_down);
+			words_found.Add(word_left, array_left);
+			words_found.Add(word_down, array_down);
 		}
-
 		
 		const global_words_t* words = flecs_world.get<tetris::global_words_t>();
 		tetris_score_t* score = flecs_world.get_mut<tetris::tetris_score_t>();
 		
-		for (FString word_found : words_found)
+		for (auto tuple : words_found)
 		{
 			int add_score = 0.0;
-			if (auto row = words->character_datatable->FindRow<FWord>(FName(word_found), ""))
+			// If the word exist in our database
+			if (auto row = words->character_datatable->FindRow<FWord>(FName(tuple.Key), ""))
 			{
 				add_score = row->score;
 				score->true_score += row->score;
+
+				UE_LOG(LogTemp, Display, TEXT("Word found = %s | Add Score = %d"), *tuple.Key, add_score);	
+
+				// Simple feedback
+				float duration = 0.2;
+				int idx = 0;
+				for (auto cell_entity : tuple.Value)
+				{
+					cell_material_intensity_t* mat_intensity = cell_entity.get_mut<tetris::cell_material_intensity_t>();
+					mat_intensity->cooldown = duration * idx;
+					mat_intensity->elapsed = 0.0;
+					mat_intensity->duration = duration;
+					idx++;
+				}
 			}
 
-			UE_LOG(LogTemp, Display, TEXT("Word found = %s | Add Score = %d"), *word_found, add_score);
+
 		}
 	}
 }

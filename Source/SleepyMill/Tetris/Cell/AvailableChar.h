@@ -42,3 +42,34 @@ struct Fgrid_data_t
 	flecs::entity occupied_entity;
 	FString current_string = FString("");
 };
+
+USTRUCT()
+struct FWord_Data
+{
+	GENERATED_BODY()
+	
+	FString word = FString();
+	TArray<flecs::entity> cell_entity;
+	
+	friend uint32 GetTypeHash(const FWord_Data& PlayerInfo)
+	{
+		return GetTypeHash(PlayerInfo.word);
+	}
+	
+	friend bool operator==(const FWord_Data& A, const FWord_Data& B)
+	{
+		if (A.word != B.word)
+			return false;
+
+		for (flecs::entity c_a : A.cell_entity)
+		{
+			for (flecs::entity c_b : B.cell_entity)
+			{
+				if (c_b == c_a)
+					return true;
+			}
+		}
+		
+		return false;
+	}
+};

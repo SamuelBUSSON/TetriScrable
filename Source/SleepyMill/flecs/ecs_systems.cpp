@@ -12,6 +12,7 @@ void ecs::init_system(flecs::world* world)
 	world->system<tetris::shape_t ,flecs::ue::entity_link_t>().without<tetris::shape_init_t>().iter(tetris::shape_init);
 	world->system<tetris::current_shape_t>().iter(tetris::current_shape_movement_system);
 	world->system<tetris::cell_t, flecs::ue::entity_link_t>().iter(tetris::cell_rotation);
-	world->system<tetris::cell_scale_t, flecs::ue::entity_link_t>().iter(tetris::cell_scale);	
+	world->system<tetris::cell_scale_t, flecs::ue::entity_link_t>().iter(tetris::cell_scale);
+	world->system<tetris::cell_t, tetris::cell_material_intensity_t, flecs::ue::entity_link_t>().iter(tetris::cell_material_intensity);	
 	world->system<tetris::tetris_score_t>().iter(tetris::score_update);
 }
