@@ -8,8 +8,10 @@
 #include "SleepyMill/unreal_utils.h"
 #include "SleepyMill/flecs/flecs.h"
 #include "SleepyMill/flecs/ue_flecs.h"
+#include "SleepyMill/Tetris/tetris_type.h"
 #include "SleepyMill/Tetris/Cell/AvailableChar.h"
 #include "SleepyMill/Tetris/Cell/cell_type.h"
+#include "SleepyMill/Tetris/Shape/shape_type.h"
 
 
 // Sets default values
@@ -20,6 +22,8 @@ APlayerPawn::APlayerPawn()
 
 	camera_component = CreateDefaultSubobject<UCameraComponent>(TEXT("main_camera"));
 	camera_component->SetupAttachment(GetRootComponent());
+	camera_component->ProjectionMode = ECameraProjectionMode::Orthographic;
+	camera_component->OrthoWidth = this->camera_width;
 }
 
 // Called when the game starts or when spawned
@@ -34,7 +38,37 @@ void APlayerPawn::BeginPlay()
 			Subsystem->AddMappingContext(default_mapping_context, 0);
 		}
 	}
+	
+	flecs::world* flecs_world = flecs::ue::get_world(this);
 
+	tetris::player_t player;
+	player.player = this;
+	flecs_world->set(player);
+
+	// Current shape setup
+	tetris::current_shape_t current_shape = {};
+	flecs_world->set(current_shape);
+
+	// Setup grid data
+	tetris::grid_t grid = {};	
+	grid.grid_height = this->grid_height;
+	grid.grid_width = this->grid_width;
+	for (int x = 0; x < this->grid_width; ++x)
+	{
+		for (int y = 0; y < this->grid_height; ++y)
+		{
+			FVector2d position = {};
+			position.X = x;
+			position.Y = y;
+
+			Fgrid_data_t data = {};
+			grid.grid.Add(position, data);
+		}
+	}
+
+	flecs_world->set(grid);
+
+	// Setup game data
 	if (this->character_datatable.LoadSynchronous() != nullptr)
 	{
 		tetris::global_cell_character_t global_char = {};
@@ -48,49 +82,65 @@ void APlayerPawn::BeginPlay()
 				global_char.consonants.Add(row_value->character);
 		}
 
-		flecs::world* flecs_world = flecs::ue::get_world(this);
 		flecs_world->set(global_char);
 	}
 }
 
 void APlayerPawn::on_right_action(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("APlayerPawn::on_right_action"))
+	bool is_pressed = Value.Get<bool>();
+	if (is_pressed)
+	{
+		flecs::world* flecs_world = flecs::ue::get_world(this);
+		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
+		current_shape->goal += this->GetActorRightVector() * 100;		
+	}
 }
 
 void APlayerPawn::on_down_action(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("APlayerPawn::on_down_action"))
+	bool is_pressed = Value.Get<bool>();
+	if (is_pressed)
+	{
+		flecs::world* flecs_world = flecs::ue::get_world(this);
+		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
+		current_shape->goal -= this->GetActorUpVector() * 100;	
+	}
 }
 
 void APlayerPawn::on_left_action(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("APlayerPawn::on_left_action"))
+	bool is_pressed = Value.Get<bool>();
+	if (is_pressed)
+	{
+		flecs::world* flecs_world = flecs::ue::get_world(this);
+		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
+		current_shape->goal -= this->GetActorRightVector() * 100;		
+	}
 }
 
 void APlayerPawn::on_shift_action(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("APlayerPawn::on_shift_action"))
+	bool is_pressed = Value.Get<bool>();
+	if (is_pressed)
+	{
+	}
 }
 
 void APlayerPawn::on_rotate_left_action(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("APlayerPawn::on_rotate_left_action"))
 	bool is_pressed = Value.Get<bool>();
 	if (is_pressed)
 	{
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		FVector spawn_pos = this->GetActorLocation() + this->GetActorForwardVector() * 200;
-		FRotator spawn_rot = {};
-
-		AActor* spawned_actor = GetWorld()->SpawnActor(unreal_utils::pick_random(this->shape_list), &spawn_pos, &spawn_rot, SpawnInfo);
 	}
 }
 
 void APlayerPawn::on_rotate_right_action(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("APlayerPawn::on_rotate_right_action"))
+	bool is_pressed = Value.Get<bool>();
+	if (is_pressed)
+	{
+	}
 }
 
 // Called every frame

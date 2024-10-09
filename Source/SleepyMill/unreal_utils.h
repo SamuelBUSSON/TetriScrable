@@ -9,5 +9,4 @@ namespace unreal_utils
 		
 		return array[FMath::RandRange(0, array.Num() - 1)];
 	}
-	
 };

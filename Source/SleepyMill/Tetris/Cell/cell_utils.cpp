@@ -9,10 +9,10 @@ FString tetris::get_random_character(flecs::world* world, float vowel_rate)
 {
 	const tetris::global_cell_character_t* global_char = world->get<tetris::global_cell_character_t>();
 	if (global_char == nullptr)
-		return FString("A");
+		return FString("Err");
 
 	
-	if (FMath::FRandRange(0.0, 1.0f) > vowel_rate)
+	if (FMath::FRandRange(0.0, 1.0f) <= vowel_rate)
 	{
 		return unreal_utils::pick_random(global_char->vowels);
 	}

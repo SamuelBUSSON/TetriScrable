@@ -1,16 +1,21 @@
 #pragma once
-#include "SleepyMill/flecs/flecs.h"
+#include "Cell/AvailableChar.h"
+
+
+class APlayerPawn;
 
 namespace tetris
 {
-	struct tetris_square_t
+	struct grid_t
 	{
-		
+		int grid_width = 0;
+		int grid_height = 0;
+		TMap<FVector2d, Fgrid_data_t> grid;
 	};
 
-	struct tetris_shape_t
+	struct player_t
 	{
-		TArray<flecs::entity> square_entity;
+		TSoftObjectPtr<APlayerPawn> player;
 	};
 }
 

@@ -24,6 +24,15 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<AActor>> shape_list;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	int grid_width = 10;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	int grid_height = 10;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	float camera_width = 4096;
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
