@@ -125,12 +125,6 @@ void APlayerPawn::on_down_action(const FInputActionValue& Value)
 		
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		movement_params->goal -= this->GetActorUpVector() * 100;
-
-		float min_height = this->GetActorLocation().Z - grid_height / 2.0;
-		if (movement_params->goal.Z <= min_height)
-		{
-			current_shape->can_move = false;
-		}
 		
 		if (!tetris::can_go_below(current_shape->shape_entity))
 		{

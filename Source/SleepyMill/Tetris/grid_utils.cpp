@@ -5,6 +5,7 @@
 #include "SleepyMill/unreal_utils.h"
 #include "SleepyMill/flecs/flecs.h"
 #include "SleepyMill/flecs/ue_flecs.h"
+#include "SleepyMill/Player/PlayerPawn.h"
 
 
 namespace tetris
@@ -47,16 +48,24 @@ namespace tetris
 		AActor* shape_actor = shape_entity.get<flecs::ue::entity_link_t>()->actor;
 		const shape_movement_params_t* shape_movement = shape_entity.get<shape_movement_params_t>();
 
+		const grid_t* grid = flecs_world.get<grid_t>();
+		const player_t* player = flecs_world.get<player_t>();
+		float min_height = player->player->GetActorLocation().Z - grid->grid_height / 2.0;
+
 		for (AActor* cell_actor: shape->cell_actor)
 		{
 			FVector relative_offset = shape_actor->GetActorLocation() - cell_actor->GetActorLocation();
 			FVector cell_goal_location = shape_movement->goal - relative_offset;
+			if (cell_goal_location.Z <= min_height)
+				return false;
+				
 			round_location(cell_goal_location);
 			if (is_pos_below_occupied(&flecs_world, cell_goal_location))
 			{
 				return false;
 			}
 		}
+		
 
 		return true;
 	}
