@@ -151,11 +151,6 @@ void APlayerPawn::on_right_action(const FInputActionValue& Value)
 		
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		movement_params->goal += this->GetActorRightVector() * 100;
-		
-		if (!tetris::can_go_below(current_shape->shape_entity))
-		{
-			current_shape->can_move = false;
-		}
 	}
 }
 
@@ -169,13 +164,15 @@ void APlayerPawn::on_down_action(const FInputActionValue& Value)
 		if (!current_shape->can_move)
 			return;
 		
-		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
-		movement_params->goal -= this->GetActorUpVector() * 100;
-		
 		if (!tetris::can_go_below(current_shape->shape_entity))
 		{
-			current_shape->can_move = false;
+			if (is_shift_pressed)				
+				current_shape->can_move = false;
+			return;
 		}
+		
+		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
+		movement_params->goal -= this->GetActorUpVector() * 100;
 	}
 }
 
@@ -198,20 +195,13 @@ void APlayerPawn::on_left_action(const FInputActionValue& Value)
 
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		movement_params->goal -= this->GetActorRightVector() * 100;
-
-		if (!tetris::can_go_below(current_shape->shape_entity))
-		{
-			current_shape->can_move = false;
-		}
 	}
 }
 
 void APlayerPawn::on_shift_action(const FInputActionValue& Value)
 {
 	bool is_pressed = Value.Get<bool>();
-	if (is_pressed)
-	{
-	}
+	is_shift_pressed = is_pressed; 
 }
 
 void APlayerPawn::on_rotate_left_action(const FInputActionValue& Value)

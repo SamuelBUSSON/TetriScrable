@@ -55,7 +55,6 @@ namespace tetris
 			to_cam.Z = 0.0;
 			to_cam.Y = 0.0;
 			text_render->SetWorldRotation(to_cam.Rotation());
-			
 		}
 	}
 
