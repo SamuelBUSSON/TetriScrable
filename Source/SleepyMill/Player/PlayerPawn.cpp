@@ -8,6 +8,7 @@
 #include "SleepyMill/unreal_utils.h"
 #include "SleepyMill/flecs/flecs.h"
 #include "SleepyMill/flecs/ue_flecs.h"
+#include "SleepyMill/Tetris/grid_utils.h"
 #include "SleepyMill/Tetris/tetris_type.h"
 #include "SleepyMill/Tetris/Cell/AvailableChar.h"
 #include "SleepyMill/Tetris/Cell/cell_type.h"
@@ -49,17 +50,23 @@ void APlayerPawn::BeginPlay()
 	tetris::current_shape_t current_shape = {};
 	flecs_world->set(current_shape);
 
+	// Convert to meter
+	this->grid_height *= 100;
+	this->grid_width *= 100;
+	
 	// Setup grid data
-	tetris::grid_t grid = {};	
+	tetris::grid_t grid = {};
 	grid.grid_height = this->grid_height;
 	grid.grid_width = this->grid_width;
-	for (int x = 0; x < this->grid_width; ++x)
+	FVector player_loc =  this->GetActorLocation();
+	for (int x = -this->grid_width / 2; x < this->grid_width / 2; x += 100)
 	{
-		for (int y = 0; y < this->grid_height; ++y)
+		for (int y = -this->grid_height / 2; y < this->grid_height / 2; y += 100)
 		{
-			FVector2d position = {};
-			position.X = x;
-			position.Y = y;
+			FVector position = {};
+			position.X = 0;
+			position.Y = player_loc.Y + x;
+			position.Z = player_loc.Z + y;
 
 			Fgrid_data_t data = {};
 			grid.grid.Add(position, data);
@@ -93,7 +100,16 @@ void APlayerPawn::on_right_action(const FInputActionValue& Value)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
-		current_shape->goal += this->GetActorRightVector() * 100;		
+		if (!current_shape->can_move)
+			return;
+
+		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
+		movement_params->goal += this->GetActorRightVector() * 100;
+		
+		if (!tetris::can_go_below(current_shape->shape_entity))
+		{
+			current_shape->can_move = false;
+		}
 	}
 }
 
@@ -104,7 +120,22 @@ void APlayerPawn::on_down_action(const FInputActionValue& Value)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
-		current_shape->goal -= this->GetActorUpVector() * 100;	
+		if (!current_shape->can_move)
+			return;
+		
+		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
+		movement_params->goal -= this->GetActorUpVector() * 100;
+
+		float min_height = this->GetActorLocation().Z - grid_height / 2.0;
+		if (movement_params->goal.Z <= min_height)
+		{
+			current_shape->can_move = false;
+		}
+		
+		if (!tetris::can_go_below(current_shape->shape_entity))
+		{
+			current_shape->can_move = false;
+		}
 	}
 }
 
@@ -115,7 +146,16 @@ void APlayerPawn::on_left_action(const FInputActionValue& Value)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
-		current_shape->goal -= this->GetActorRightVector() * 100;		
+		if (!current_shape->can_move)
+			return;
+
+		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
+		movement_params->goal -= this->GetActorRightVector() * 100;		
+
+		if (!tetris::can_go_below(current_shape->shape_entity))
+		{
+			current_shape->can_move = false;
+		}
 	}
 }
 

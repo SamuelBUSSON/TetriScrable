@@ -28,6 +28,8 @@ namespace tetris
 				{
 					shape.cell_entity.Add(unreal_flecs_entity->entity);
 				}
+
+				shape.cell_actor.Add(child_actor);
 			}
 
 			if (shape.cell_entity.Num() > 0)

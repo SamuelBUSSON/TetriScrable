@@ -12,6 +12,7 @@ void UShapeAuthoring::ConvertToEntityComponent(flecs::world* world, flecs::entit
 	movement_params.frequency = this->frequency;
 	movement_params.damping_ratio = this->damping_ratio;
 	movement_params.spring_data.current_position = this->GetOwner()->GetActorLocation();
+	movement_params.goal = movement_params.spring_data.current_position;
 	entity.set(shape);
 	entity.set(movement_params);
 }

@@ -9,6 +9,7 @@ namespace tetris
 	struct shape_t
 	{
 		TArray<flecs::entity> cell_entity;
+		TArray<AActor*> cell_actor;
 	};
 
 	struct shape_movement_params_t
@@ -17,12 +18,13 @@ namespace tetris
 		spring_utils::damped_spring_vector_t spring_data;
 		float damping_ratio = 0.0;
 		float frequency = 0.0;
+		FVector goal = {};
 	};
 
 	struct current_shape_t
 	{
 		AActor* shape_actor = nullptr;
 		flecs::entity shape_entity = {};
-		FVector goal = {};
+		bool can_move = true;
 	};
 }
