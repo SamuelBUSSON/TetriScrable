@@ -50,6 +50,12 @@ void APlayerPawn::BeginPlay()
 	tetris::current_shape_t current_shape = {};
 	flecs_world->set(current_shape);
 
+	// Score setup
+	tetris::tetris_score_t score = {};
+	score.damping_ratio = this->score_damping;
+	score.frequency = this->score_frequency;
+	flecs_world->set(score);
+
 	// Convert to meter
 	this->grid_height *= 100;
 	this->grid_width *= 100;

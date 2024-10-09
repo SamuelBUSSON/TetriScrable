@@ -36,6 +36,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
 	float camera_width = 4096;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	float score_damping = 0.5;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	float score_frequency = 50;
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

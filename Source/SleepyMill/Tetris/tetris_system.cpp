@@ -77,4 +77,12 @@ namespace tetris
 			}
 		}
 	}
+
+	void score_update(flecs::iter it, tetris::tetris_score_t* score)
+	{
+		float dt = it.delta_time();
+		spring_utils::calc_damped_spring_motion_params(score->spring_params, dt, score->frequency, score->damping_ratio);
+		spring_utils::compute_spring_goal_float(score->true_score, score->spring_data, score->spring_params);
+		score->display_score = score->spring_data.current_position;
+	}
 }

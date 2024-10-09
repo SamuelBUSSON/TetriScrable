@@ -141,6 +141,7 @@ namespace tetris
 
 		
 		const global_words_t* words = flecs_world.get<tetris::global_words_t>();
+		tetris_score_t* score = flecs_world.get_mut<tetris::tetris_score_t>();
 		
 		for (FString word_found : words_found)
 		{
@@ -148,6 +149,7 @@ namespace tetris
 			if (auto row = words->character_datatable->FindRow<FWord>(FName(word_found), ""))
 			{
 				add_score = row->score;
+				score->true_score += row->score;
 			}
 
 			UE_LOG(LogTemp, Display, TEXT("Word found = %s | Add Score = %d"), *word_found, add_score);
