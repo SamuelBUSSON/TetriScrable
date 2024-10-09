@@ -67,7 +67,10 @@ namespace tetris
 				{
 					AActor* cell_actor = cell_entity.get<flecs::ue::entity_link_t>()->actor;
 					const cell_t* cell_data = cell_entity.get<tetris::cell_t>();
-					tetris::add_string(grid, cell_actor->GetActorLocation(), cell_data->current_cell_text);
+					tetris::add_string(grid, cell_actor->GetActorLocation(), cell_data->current_cell_text, cell_actor, cell_entity);
+
+					tetris::cell_scale_t* cell_scale = cell_entity.get_mut<tetris::cell_scale_t>();
+					cell_scale->spring_data.current_velocity += 10;
 				}
 
 				tetris::check_for_words(current_shape->shape_entity);

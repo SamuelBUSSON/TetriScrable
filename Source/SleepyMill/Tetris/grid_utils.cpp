@@ -11,7 +11,7 @@
 
 namespace tetris
 {
-	bool is_pos_occupied(flecs::world* world, FVector position)
+	bool is_pos_occupied(flecs::world* world, FVector position, flecs::entity& entity_inside)
 	{
 		const grid_t* grid = world->get<grid_t>();
 		if (grid == nullptr)
@@ -19,6 +19,7 @@ namespace tetris
 
 		if (const Fgrid_data_t* cell = grid->grid.Find(position))
 		{
+			entity_inside = cell->occupied_entity;
 			return cell->is_occupied;
 		}
 
@@ -32,13 +33,15 @@ namespace tetris
 		location.Z = FMath::RoundToInt(location.Z);
 	}
 
-	void add_string(tetris::grid_t* grid, FVector location, FString string)
+	void add_string(tetris::grid_t* grid, FVector location, FString string, AActor* occupied_actor, flecs::entity entity)
 	{
 		round_location(location);
 		if (Fgrid_data_t* grid_cell = grid->grid.Find(location))
 		{
 			grid_cell->current_string = string;
 			grid_cell->is_occupied = true;
+			grid_cell->occupied_actor = occupied_actor;
+			grid_cell->occupied_entity = entity;
 		}
 	}
 
@@ -61,7 +64,8 @@ namespace tetris
 				return false;
 				
 			round_location(cell_goal_location);
-			if (is_pos_below_occupied(&flecs_world, cell_goal_location))
+			flecs::entity touch_entity = flecs::entity::null();
+			if (is_pos_occupied(&flecs_world, cell_goal_location + FVector(0,0, -100), touch_entity))
 			{
 				return false;
 			}
@@ -70,7 +74,7 @@ namespace tetris
 		return true;
 	}
 
-	bool can_go_left(flecs::entity shape_entity)
+	bool can_go_left(flecs::entity shape_entity, TArray<flecs::entity>& touched_entity)
 	{
 		flecs::world flecs_world = shape_entity.world();
 		const shape_t* shape = shape_entity.get<shape_t>();
@@ -89,8 +93,10 @@ namespace tetris
 				return false;
 				
 			round_location(cell_goal_location);
-			if (is_pos_occupied(&flecs_world, cell_goal_location + FVector(0, -100, 0)))
+			flecs::entity touch_entity = flecs::entity::null();
+			if (is_pos_occupied(&flecs_world, cell_goal_location + FVector(0, -100, 0), touch_entity))
 			{
+				touched_entity.Add(touch_entity);
 				return false;
 			}
 		}
@@ -98,7 +104,7 @@ namespace tetris
 		return true;
 	}
 
-	bool can_go_right(flecs::entity shape_entity)
+	bool can_go_right(flecs::entity shape_entity, TArray<flecs::entity>& touched_entity)
 	{
 		flecs::world flecs_world = shape_entity.world();
 		const shape_t* shape = shape_entity.get<shape_t>();
@@ -117,8 +123,10 @@ namespace tetris
 				return false;
 				
 			round_location(cell_goal_location);
-			if (is_pos_occupied(&flecs_world, cell_goal_location + FVector(0, 100, 0)))
+			flecs::entity touch_entity = flecs::entity::null();
+			if (is_pos_occupied(&flecs_world, cell_goal_location + FVector(0, 100, 0), touch_entity))
 			{
+				touched_entity.Add(touch_entity);
 				return false;
 			}
 		}
@@ -210,22 +218,5 @@ namespace tetris
 
 			UE_LOG(LogTemp, Display, TEXT("Word found = %s | Add Score = %d"), *word_found, add_score);
 		}
-	}
-
-	bool is_pos_below_occupied(flecs::world* world, FVector location)
-	{
-		const grid_t* grid = world->get<grid_t>();
-		if (grid == nullptr)
-			return false;
-
-		location += FVector(0, 0, -100);
-		round_location(location);
-		
-		if (const Fgrid_data_t* grid_cell = grid->grid.Find(location))
-		{
-			return grid_cell->is_occupied;
-		}
-
-		return false;
 	}
 }

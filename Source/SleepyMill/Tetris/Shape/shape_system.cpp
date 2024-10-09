@@ -58,4 +58,18 @@ namespace tetris
 			
 		}
 	}
+
+	void cell_scale(flecs::iter it, tetris::cell_scale_t* cell_scale_a, flecs::ue::entity_link_t* link_a)
+	{
+		float dt = it.delta_time();
+		for (int idx : it)
+		{
+			AActor* actor = link_a[idx].actor;
+			cell_scale_t& cell_scale = cell_scale_a[idx];
+			spring_utils::calc_damped_spring_motion_params(cell_scale.spring_params, dt, cell_scale.frequency, cell_scale.damping_ratio);
+			spring_utils::compute_spring_goal_float(cell_scale.goal, cell_scale.spring_data, cell_scale.spring_params);
+				
+			actor->SetActorScale3D(FVector::One() * cell_scale.spring_data.current_position);
+		}
+	}
 }

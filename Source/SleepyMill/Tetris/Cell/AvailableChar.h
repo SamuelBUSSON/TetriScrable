@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "UObject/Object.h"
+#include "SleepyMill/flecs/flecs.h"
 #include "AvailableChar.generated.h"
 
 USTRUCT()
@@ -37,5 +38,7 @@ struct Fgrid_data_t
 	GENERATED_BODY()
 	
 	bool is_occupied = false;
+	TSoftObjectPtr<AActor> occupied_actor = nullptr;
+	flecs::entity occupied_entity;
 	FString current_string = FString("");
 };

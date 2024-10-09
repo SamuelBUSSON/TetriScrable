@@ -122,6 +122,16 @@ void APlayerPawn::BeginPlay()
 	
 }
 
+void move_feedback(TArray<flecs::entity> contact_entities)
+{
+	for (auto contact_entity : contact_entities)
+	{
+		tetris::cell_scale_t* cell_scale = contact_entity.get_mut<tetris::cell_scale_t>();
+		cell_scale->spring_data.current_velocity += 20;
+	}
+}
+
+
 void APlayerPawn::on_right_action(const FInputActionValue& Value)
 {
 	bool is_pressed = Value.Get<bool>();
@@ -131,9 +141,13 @@ void APlayerPawn::on_right_action(const FInputActionValue& Value)
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
 			return;
-		
-		if (!tetris::can_go_right(current_shape->shape_entity))
+
+		TArray<flecs::entity> contact_entities;
+		if (!tetris::can_go_right(current_shape->shape_entity, contact_entities))
+		{
+			move_feedback(contact_entities);	
 			return;
+		}
 		
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		movement_params->goal += this->GetActorRightVector() * 100;
@@ -175,8 +189,12 @@ void APlayerPawn::on_left_action(const FInputActionValue& Value)
 		if (!current_shape->can_move)
 			return;
 
-		if (!tetris::can_go_left(current_shape->shape_entity))
+		TArray<flecs::entity> contact_entities;
+		if (!tetris::can_go_left(current_shape->shape_entity, contact_entities))
+		{
+			move_feedback(contact_entities);
 			return;
+		}
 
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		movement_params->goal -= this->GetActorRightVector() * 100;
@@ -206,7 +224,6 @@ void APlayerPawn::on_rotate_left_action(const FInputActionValue& Value)
 		if (!current_shape->can_move)
 			return;
 
-		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		current_shape->shape_actor->AddActorLocalRotation(FRotator(-90, 0, 0));
 	}
 }
@@ -221,7 +238,6 @@ void APlayerPawn::on_rotate_right_action(const FInputActionValue& Value)
 		if (!current_shape->can_move)
 			return;
 
-		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		current_shape->shape_actor->AddActorLocalRotation(FRotator(90, 0, 0));
 	}
 }

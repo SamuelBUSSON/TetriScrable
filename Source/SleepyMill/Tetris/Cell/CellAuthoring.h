@@ -16,6 +16,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta=(UIMin = "0.0", UIMax = "1.0"))
 	float vowel_rate = 0.4f;
+	
+	UPROPERTY(EditAnywhere)
+	float scale_damping_ratio = 0.4f;
+	
+	UPROPERTY(EditAnywhere)
+	float scale_frequency = 30.0f;
 
 	UPROPERTY(EditAnywhere)
 	FComponentReference text_renderer_reference;
