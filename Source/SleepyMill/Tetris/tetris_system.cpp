@@ -66,7 +66,6 @@ namespace tetris
 			if (dist_to_goal <= 3)
 			{
 				current_shape->shape_actor->SetActorLocation(movement_params->goal);
-				// todo (sb) : Store cells inside grid
 				const shape_t* shape = current_shape->shape_entity.get<shape_t>();
 				for (flecs::entity cell_entity : shape->cell_entity)
 				{

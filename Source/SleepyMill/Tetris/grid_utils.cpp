@@ -275,7 +275,7 @@ namespace tetris
 
 				// Simple feedback
 				float duration = 0.2;
-				int idx = 0;
+				int idx = 1;
 				for (auto cell_entity : tuple.Value)
 				{
 					cell_material_intensity_t* mat_intensity = cell_entity.get_mut<tetris::cell_material_intensity_t>();
