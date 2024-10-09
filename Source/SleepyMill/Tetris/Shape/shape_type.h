@@ -19,6 +19,12 @@ namespace tetris
 		float damping_ratio = 0.0;
 		float frequency = 0.0;
 		FVector goal = {};
+		
+		spring_utils::damped_spring_params_t angular_spring_params;
+		spring_utils::damped_spring_float_t angular_spring_data;
+		float angluar_damping_ratio = 0.0;
+		float angluar_frequency = 0.0;
+		float angular_goal = 0.0;
 	};
 
 	struct current_shape_t

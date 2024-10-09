@@ -150,7 +150,7 @@ void APlayerPawn::on_left_action(const FInputActionValue& Value)
 			return;
 
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
-		movement_params->goal -= this->GetActorRightVector() * 100;		
+		movement_params->goal -= this->GetActorRightVector() * 100;
 
 		if (!tetris::can_go_below(current_shape->shape_entity))
 		{
@@ -172,6 +172,13 @@ void APlayerPawn::on_rotate_left_action(const FInputActionValue& Value)
 	bool is_pressed = Value.Get<bool>();
 	if (is_pressed)
 	{
+		flecs::world* flecs_world = flecs::ue::get_world(this);
+		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
+		if (!current_shape->can_move)
+			return;
+
+		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
+		current_shape->shape_actor->AddActorLocalRotation(FRotator(90, 0, 0));
 	}
 }
 
@@ -180,6 +187,13 @@ void APlayerPawn::on_rotate_right_action(const FInputActionValue& Value)
 	bool is_pressed = Value.Get<bool>();
 	if (is_pressed)
 	{
+		flecs::world* flecs_world = flecs::ue::get_world(this);
+		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
+		if (!current_shape->can_move)
+			return;
+
+		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
+		current_shape->shape_actor->AddActorLocalRotation(FRotator(-90, 0, 0));
 	}
 }
 

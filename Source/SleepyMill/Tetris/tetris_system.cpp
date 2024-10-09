@@ -47,6 +47,11 @@ namespace tetris
 		spring_utils::calc_damped_spring_motion_params(movement_params->spring_params, dt, movement_params->frequency, movement_params->damping_ratio);
 		spring_utils::compute_spring_goal_vector(movement_params->goal, movement_params->spring_data, movement_params->spring_params);
 		current_shape->shape_actor->SetActorLocation(movement_params->spring_data.current_position);
+		
+		// spring_utils::calc_damped_spring_motion_params(movement_params->angular_spring_params, dt, movement_params->angluar_frequency, movement_params->angluar_damping_ratio);
+		// spring_utils::compute_spring_goal_float(movement_params->angular_goal, movement_params->angular_spring_data, movement_params->angular_spring_params);
+		// FRotator actor_rot = current_shape->shape_actor->GetActorRotation();		
+		// current_shape->shape_actor->SetActorRotation(FRotator(movement_params->angular_goal,actor_rot.Yaw,actor_rot.Roll));
 
 		// Is blocked by something or reach the bottom
 		if (!current_shape->can_move)

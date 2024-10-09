@@ -19,6 +19,12 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	float frequency = 10.0f;
+	
+	UPROPERTY(EditAnywhere)
+	float angular_damping_ratio = 1.1f;
+	
+	UPROPERTY(EditAnywhere)
+	float angular_frequency = 100.0f;
 
 	virtual void ConvertToEntityComponent(flecs::world* world, flecs::entity& entity) override;
 };
