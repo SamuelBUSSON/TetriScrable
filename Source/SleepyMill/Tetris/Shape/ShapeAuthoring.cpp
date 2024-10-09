@@ -3,33 +3,15 @@
 
 #include "ShapeAuthoring.h"
 
+#include "shape_type.h"
 
-// Sets default values for this component's properties
-UShapeAuthoring::UShapeAuthoring()
+void UShapeAuthoring::ConvertToEntityComponent(flecs::world* world, flecs::entity& entity)
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	tetris::shape_t shape = {};
+	tetris::shape_movement_params_t movement_params = {};
+	movement_params.frequency = this->frequency;
+	movement_params.damping_ratio = this->damping_ratio;
+	movement_params.spring_data.current_position = this->GetOwner()->GetActorLocation();
+	entity.set(shape);
+	entity.set(movement_params);
 }
-
-
-// Called when the game starts
-void UShapeAuthoring::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void UShapeAuthoring::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-

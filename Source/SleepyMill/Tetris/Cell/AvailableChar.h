@@ -18,3 +18,12 @@ struct FAvailableChar : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool is_vowel = false;
 };
+
+USTRUCT()
+struct Fgrid_data_t
+{
+	GENERATED_BODY()
+	
+	bool is_occupied = false;
+	FString current_string = FString("");
+};

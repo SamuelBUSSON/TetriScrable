@@ -4,24 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "SleepyMill/flecs/FlecsAuthoringComponent.h"
 #include "ShapeAuthoring.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class SLEEPYMILL_API UShapeAuthoring : public UActorComponent
+class SLEEPYMILL_API UShapeAuthoring : public UActorComponent, public IFlecsAuthoringComponent
 {
+public:
 	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere)
+	float damping_ratio = 1.1f;
+	
+	UPROPERTY(EditAnywhere)
+	float frequency = 10.0f;
 
-public:
-	// Sets default values for this component's properties
-	UShapeAuthoring();
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void ConvertToEntityComponent(flecs::world* world, flecs::entity& entity) override;
 };

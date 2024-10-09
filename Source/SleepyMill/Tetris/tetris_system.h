@@ -1,4 +1,5 @@
 #pragma once
+#include "Shape/shape_type.h"
 #include "SleepyMill/flecs/flecs.h"
 
 namespace flecs::ue
@@ -7,7 +8,7 @@ namespace flecs::ue
 }
 
 namespace tetris
-{	
-	void tetris_movement_system(flecs::iter it, flecs::ue::entity_link_t* link_a);
+{
+	void current_shape_movement_system(flecs::iter it, tetris::current_shape_t* current_shape);
 }
 

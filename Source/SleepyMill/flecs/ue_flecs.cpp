@@ -1,6 +1,7 @@
 #include "ue_flecs.h"
 
 #include "CoreMinimal.h"
+#include "FlecsEntity.h"
 #include "Kismet/GameplayStatics.h"
 #include "FlecsSubsystem.h"
 
@@ -32,7 +33,17 @@ namespace flecs
 
             return get_world(actor->GetWorld());
         }
-        
+
+        flecs::entity get_entity_from_actor(AActor* actor)
+        {
+            if (UFlecsEntity* unreal_flecs_entity = actor->FindComponentByClass<UFlecsEntity>())
+            {
+                return unreal_flecs_entity->entity;
+            }
+
+            return flecs::entity::null();
+        }
+
         void destroy_entity(flecs::entity entity)
         {
             const entity_link_t* link = entity.get<entity_link_t>();

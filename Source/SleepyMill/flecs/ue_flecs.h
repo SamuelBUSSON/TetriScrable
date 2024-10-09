@@ -22,6 +22,7 @@ namespace flecs
 
         flecs::world* get_world(UWorld* uworld);
         flecs::world* get_world(AActor* actor);
+        flecs::entity get_entity_from_actor(AActor* actor);
         void destroy_entity(flecs::entity entity);
     }
 }
