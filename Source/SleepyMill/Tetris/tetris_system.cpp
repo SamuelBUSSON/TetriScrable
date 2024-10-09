@@ -69,7 +69,8 @@ namespace tetris
 					const cell_t* cell_data = cell_entity.get<tetris::cell_t>();
 					tetris::add_string(grid, cell_actor->GetActorLocation(), cell_data->current_cell_text);
 				}
-				
+
+				tetris::check_for_words(current_shape->shape_entity);
 				current_shape->shape_actor = nullptr;
 				current_shape->shape_entity = flecs::entity::null();
 				current_shape->can_move = true;

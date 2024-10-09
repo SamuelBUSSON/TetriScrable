@@ -23,6 +23,9 @@ public:
 	TSoftObjectPtr<UDataTable> character_datatable = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	TSoftObjectPtr<UDataTable> words_datatable = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<AActor>> shape_list;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))

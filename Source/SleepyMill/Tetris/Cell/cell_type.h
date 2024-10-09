@@ -22,4 +22,9 @@ namespace tetris
 		TArray<FString> vowels;
 		TArray<FString> consonants;
 	};
+	
+	struct global_words_t
+	{
+		TSoftObjectPtr<UDataTable> character_datatable = nullptr;
+	};
 }

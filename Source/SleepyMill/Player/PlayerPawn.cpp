@@ -91,6 +91,14 @@ void APlayerPawn::BeginPlay()
 
 		flecs_world->set(global_char);
 	}
+	
+	if (this->words_datatable.LoadSynchronous() != nullptr)
+	{
+		tetris::global_words_t words_list = {};
+		words_list.character_datatable = this->words_datatable; 
+		flecs_world->set(words_list);
+	}
+	
 }
 
 void APlayerPawn::on_right_action(const FInputActionValue& Value)

@@ -20,6 +20,18 @@ struct FAvailableChar : public FTableRowBase
 };
 
 USTRUCT()
+struct FWord : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString word = FString("");
+		
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int score = 0;
+};
+
+USTRUCT()
 struct Fgrid_data_t
 {
 	GENERATED_BODY()
