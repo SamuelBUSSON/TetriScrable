@@ -29,6 +29,12 @@ public:
 	TArray<TSubclassOf<AActor>> shape_list;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> grid_checker_a;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> grid_checker_b;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))
 	int grid_width = 10;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Global, meta = (AllowPrivateAccess = "true"))

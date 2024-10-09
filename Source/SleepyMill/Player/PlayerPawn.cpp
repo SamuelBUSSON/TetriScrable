@@ -69,10 +69,25 @@ void APlayerPawn::BeginPlay()
 	{
 		for (int y = -this->grid_height / 2; y < this->grid_height / 2; y += 100)
 		{
+			bool is_x_odd = x / 100 % 2 == 0;
+			bool is_y_odd = y / 100 % 2 == 0;
+			TSubclassOf<AActor> actor_to_spawm = grid_checker_a;
+			if ((is_x_odd && !is_y_odd) || is_y_odd && !is_x_odd)
+				actor_to_spawm = grid_checker_b;
+			
 			FVector position = {};
 			position.X = 0;
 			position.Y = player_loc.Y + x;
 			position.Z = player_loc.Z + y;
+
+			FActorSpawnParameters SpawnInfo;
+			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			FVector spawn_pos = position + this->GetActorForwardVector() * 5000;
+			spawn_pos.Y = FMath::RoundToInt(spawn_pos.Y);
+			spawn_pos.Z = FMath::RoundToInt(spawn_pos.Z);
+			FRotator spawn_rot = FRotator(0, 0, 0);
+
+			this->GetWorld()->SpawnActor(actor_to_spawm, &spawn_pos, &spawn_rot, SpawnInfo);			
 
 			Fgrid_data_t data = {};
 			grid.grid.Add(position, data);
@@ -116,7 +131,10 @@ void APlayerPawn::on_right_action(const FInputActionValue& Value)
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
 			return;
-
+		
+		if (!tetris::can_go_right(current_shape->shape_entity))
+			return;
+		
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
 		movement_params->goal += this->GetActorRightVector() * 100;
 		
@@ -155,6 +173,9 @@ void APlayerPawn::on_left_action(const FInputActionValue& Value)
 		flecs::world* flecs_world = flecs::ue::get_world(this);
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
+			return;
+
+		if (!tetris::can_go_left(current_shape->shape_entity))
 			return;
 
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();

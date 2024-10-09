@@ -37,7 +37,7 @@ namespace tetris
 			spawn_dir.Normalize();
 			FRotator spawn_rot = spawn_dir.Rotation() + FRotator(0, 90, 0);
 			
-			current_shape->shape_actor = u_world->SpawnActor(unreal_utils::pick_random(player_pawn->shape_list), &spawn_pos, &spawn_rot, SpawnInfo);			
+			current_shape->shape_actor = u_world->SpawnActor(unreal_utils::pick_random(player_pawn->shape_list), &spawn_pos, &spawn_rot, SpawnInfo);
 			current_shape->shape_entity = flecs::ue::get_entity_from_actor(current_shape->shape_actor);
 			return;
 		}

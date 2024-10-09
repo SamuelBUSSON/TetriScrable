@@ -70,6 +70,62 @@ namespace tetris
 		return true;
 	}
 
+	bool can_go_left(flecs::entity shape_entity)
+	{
+		flecs::world flecs_world = shape_entity.world();
+		const shape_t* shape = shape_entity.get<shape_t>();
+		AActor* shape_actor = shape_entity.get<flecs::ue::entity_link_t>()->actor;
+		const shape_movement_params_t* shape_movement = shape_entity.get<shape_movement_params_t>();
+
+		const grid_t* grid = flecs_world.get<grid_t>();
+		const player_t* player = flecs_world.get<player_t>();
+		float min_idth = player->player->GetActorLocation().Y - grid->grid_width / 2.0;
+
+		for (AActor* cell_actor: shape->cell_actor)
+		{
+			FVector relative_offset = shape_actor->GetActorLocation() - cell_actor->GetActorLocation();
+			FVector cell_goal_location = shape_movement->goal - relative_offset;
+			if (cell_goal_location.Y <= min_idth)
+				return false;
+				
+			round_location(cell_goal_location);
+			if (is_pos_occupied(&flecs_world, cell_goal_location + FVector(0, -100, 0)))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool can_go_right(flecs::entity shape_entity)
+	{
+		flecs::world flecs_world = shape_entity.world();
+		const shape_t* shape = shape_entity.get<shape_t>();
+		AActor* shape_actor = shape_entity.get<flecs::ue::entity_link_t>()->actor;
+		const shape_movement_params_t* shape_movement = shape_entity.get<shape_movement_params_t>();
+
+		const grid_t* grid = flecs_world.get<grid_t>();
+		const player_t* player = flecs_world.get<player_t>();
+		float max_width = player->player->GetActorLocation().Y + grid->grid_width / 2.0;
+
+		for (AActor* cell_actor: shape->cell_actor)
+		{
+			FVector relative_offset = shape_actor->GetActorLocation() - cell_actor->GetActorLocation();
+			FVector cell_goal_location = shape_movement->goal - relative_offset;
+			if (cell_goal_location.Y >= max_width - 100)
+				return false;
+				
+			round_location(cell_goal_location);
+			if (is_pos_occupied(&flecs_world, cell_goal_location + FVector(0, 100, 0)))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	FVector find_border_cell(const grid_t* grid, FVector location, FVector offset)
 	{
 		FVector new_location = location + offset;
