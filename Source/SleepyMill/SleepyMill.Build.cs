@@ -8,7 +8,7 @@ public class SleepyMill : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "UMG", "InputCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
 

@@ -1,12 +1,17 @@
 #include "grid_utils.h"
 
 #include "tetris_type.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Cell/cell_type.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 #include "Shape/shape_type.h"
 #include "SleepyMill/unreal_utils.h"
 #include "SleepyMill/flecs/flecs.h"
 #include "SleepyMill/flecs/ue_flecs.h"
 #include "SleepyMill/Player/PlayerPawn.h"
+#include "SleepyMill/UI/ui_type.h"
 
 
 namespace tetris
@@ -222,7 +227,23 @@ namespace tetris
 				add_score = row->score;
 				score->true_score += row->score;
 
-				UE_LOG(LogTemp, Display, TEXT("Word found = %s | Add Score = %d"), *tuple.Key, add_score);	
+				UE_LOG(LogTemp, Display, TEXT("Word found = %s | Add Score = %d"), *tuple.Key, add_score);
+				
+				if (const ui_global_t* ui_global = flecs_world.get<ui_global_t>())
+				{
+					ui_t* ui = ui_global->main_ui.get_mut<ui_t>();
+					UTextBlock* add_score_text = ui->add_score.Get();
+					add_score_text->SetText(FText::FromString(FString::SanitizeFloat(add_score)));
+					FVector2d screen_position = {};
+				
+					UCanvasPanelSlot* slot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ui->add_score.Get());
+					APlayerController* player_controller = shape_actor->GetWorld()->GetFirstPlayerController();
+					int size_x, size_y;
+					player_controller->GetViewportSize(size_x, size_y);
+				
+					UGameplayStatics::ProjectWorldToScreen(player_controller, shape_actor->GetActorLocation(), screen_position);
+					ui->add_score_spring_data.current_position = screen_position - FVector2d(slot->GetAnchors().Maximum.X * size_x, slot->GetAnchors().Maximum.Y * size_y);
+				}
 
 				// Simple feedback
 				float duration = 0.2;
@@ -236,8 +257,6 @@ namespace tetris
 					idx++;
 				}
 			}
-
-
 		}
 	}
 }
