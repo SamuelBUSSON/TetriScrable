@@ -1,9 +1,13 @@
 #include "shape_system.h"
 
 #include "shape_type.h"
+#include "Components/TextRenderComponent.h"
 #include "SleepyMill/flecs/FlecsAuthoringComponent.h"
 #include "SleepyMill/flecs/FlecsEntity.h"
 #include "SleepyMill/flecs/ue_flecs.h"
+#include "SleepyMill/Player/PlayerPawn.h"
+#include "SleepyMill/Tetris/tetris_type.h"
+#include "SleepyMill/Tetris/Cell/cell_type.h"
 
 
 namespace tetris
@@ -34,6 +38,24 @@ namespace tetris
 
 			if (shape.cell_entity.Num() > 0)
 				it.entity(idx).add<tetris::shape_init_t>();
+		}
+	}
+
+	void cell_rotation(flecs::iter it, tetris::cell_t* cell_a, flecs::ue::entity_link_t* link_a)
+	{
+		auto world = it.world();
+		APlayerPawn* player_pawn = world.get<player_t>()->player.Get();
+		FVector player_loc = player_pawn->GetActorLocation();
+		
+		for (int idx : it)
+		{
+			tetris::cell_t& cell = cell_a[idx];
+			UTextRenderComponent* text_render = cell.text_render.Get();
+			FVector to_cam = player_loc - text_render->GetComponentLocation();
+			to_cam.Z = 0.0;
+			to_cam.Y = 0.0;
+			text_render->SetWorldRotation(to_cam.Rotation());
+			
 		}
 	}
 }

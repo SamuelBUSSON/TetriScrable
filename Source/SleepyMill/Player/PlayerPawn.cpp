@@ -178,7 +178,7 @@ void APlayerPawn::on_rotate_left_action(const FInputActionValue& Value)
 			return;
 
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
-		current_shape->shape_actor->AddActorLocalRotation(FRotator(90, 0, 0));
+		current_shape->shape_actor->AddActorLocalRotation(FRotator(-90, 0, 0));
 	}
 }
 
@@ -193,7 +193,7 @@ void APlayerPawn::on_rotate_right_action(const FInputActionValue& Value)
 			return;
 
 		tetris::shape_movement_params_t* movement_params = current_shape->shape_entity.get_mut<tetris::shape_movement_params_t>();
-		current_shape->shape_actor->AddActorLocalRotation(FRotator(-90, 0, 0));
+		current_shape->shape_actor->AddActorLocalRotation(FRotator(90, 0, 0));
 	}
 }
 

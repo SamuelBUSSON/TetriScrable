@@ -1,6 +1,5 @@
 #pragma once
 #include "SleepyMill/flecs/flecs.h"
-
 namespace flecs::ue
 {
 	struct entity_link_t;
@@ -9,9 +8,11 @@ namespace flecs::ue
 namespace tetris
 {
 	struct shape_t;
+	struct cell_t;
 }
 
 namespace tetris
 {	
 	void shape_init(flecs::iter it, tetris::shape_t* shape_a, flecs::ue::entity_link_t* link_a);
+	void cell_rotation(flecs::iter it, tetris::cell_t* cell_a, flecs::ue::entity_link_t* link_a);
 }
