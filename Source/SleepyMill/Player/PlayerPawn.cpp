@@ -138,6 +138,8 @@ void APlayerPawn::on_right_action(const FInputActionValue& Value)
 	if (is_pressed)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
+		if (tetris::is_game_over(flecs_world))
+			return;
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
 			return;
@@ -160,6 +162,8 @@ void APlayerPawn::on_down_action(const FInputActionValue& Value)
 	if (is_pressed)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
+		if (tetris::is_game_over(flecs_world))
+			return;
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
 			return;
@@ -182,6 +186,9 @@ void APlayerPawn::on_left_action(const FInputActionValue& Value)
 	if (is_pressed)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
+		if (tetris::is_game_over(flecs_world))
+			return;
+		
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
 			return;
@@ -210,6 +217,8 @@ void APlayerPawn::on_rotate_left_action(const FInputActionValue& Value)
 	if (is_pressed)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
+		if (tetris::is_game_over(flecs_world))
+			return;
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
 			return;
@@ -224,6 +233,8 @@ void APlayerPawn::on_rotate_right_action(const FInputActionValue& Value)
 	if (is_pressed)
 	{
 		flecs::world* flecs_world = flecs::ue::get_world(this);
+		if (tetris::is_game_over(flecs_world))
+			return;
 		tetris::current_shape_t* current_shape = flecs_world->get_mut<tetris::current_shape_t>();
 		if (!current_shape->can_move)
 			return;

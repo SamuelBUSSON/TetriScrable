@@ -17,7 +17,10 @@ namespace tetris
 	bool can_go_below(flecs::entity shape_entity);
 	bool can_go_left(flecs::entity shape_entity, TArray<flecs::entity>& touched_entity);
 	bool can_go_right(flecs::entity shape_entity, TArray<flecs::entity>& touched_entity);
+	bool is_cell_out_of_grid(flecs::entity shape_entity);
 	void check_for_words(flecs::entity shape_entity);
 	void add_string(tetris::grid_t* grid, FVector location, FString string, AActor* occupied_actor, flecs::entity entity);
+
+	bool is_game_over(flecs::world* world);
 
 }

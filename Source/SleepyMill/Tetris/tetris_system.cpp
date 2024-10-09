@@ -7,12 +7,17 @@
 #include "SleepyMill/unreal_utils.h"
 #include "SleepyMill/flecs/ue_flecs.h"
 #include "SleepyMill/Player/PlayerPawn.h"
+#include "SleepyMill/UI/ui_type.h"
 
 namespace tetris
 {
 	void current_shape_movement_system(flecs::iter it, tetris::current_shape_t* current_shape)
 	{
 		flecs::world world = it.world();
+		ui_global_t* ui_global = world.get_mut<ui_global_t>();
+		if (ui_global->is_game_over)
+			return;
+
 		const player_t* player = world.get<player_t>();
 
 		if (player == nullptr)
@@ -74,9 +79,15 @@ namespace tetris
 				}
 
 				tetris::check_for_words(current_shape->shape_entity);
+				if (tetris::is_cell_out_of_grid(current_shape->shape_entity))
+				{
+					ui_global->is_game_over = true;
+				}
+					
 				current_shape->shape_actor = nullptr;
 				current_shape->shape_entity = flecs::entity::null();
 				current_shape->can_move = true;
+
 			}
 		}
 	}

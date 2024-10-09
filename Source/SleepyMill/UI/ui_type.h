@@ -8,7 +8,6 @@ struct ui_t
 {
 	TSoftObjectPtr<UTextBlock> main_score = nullptr;
 	TSoftObjectPtr<UTextBlock> add_score = nullptr;
-
 	
 	spring_utils::damped_spring_params_t main_spring_params;
 	spring_utils::damped_spring_vector_2d_t main_spring_data;
@@ -26,4 +25,5 @@ struct ui_t
 struct ui_global_t
 {
 	flecs::entity main_ui;
+	bool is_game_over = false;
 };

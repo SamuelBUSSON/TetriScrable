@@ -50,6 +50,12 @@ namespace tetris
 		}
 	}
 
+	bool is_game_over(flecs::world* world)
+	{
+		const ui_global_t* ui_global = world->get<ui_global_t>();
+		return ui_global->is_game_over;
+	}
+
 	bool can_go_below(flecs::entity shape_entity)
 	{
 		flecs::world flecs_world = shape_entity.world();
@@ -137,6 +143,28 @@ namespace tetris
 		}
 
 		return true;
+	}
+
+	bool is_cell_out_of_grid(flecs::entity shape_entity)
+	{
+		flecs::world flecs_world = shape_entity.world();
+		const shape_t* shape = shape_entity.get<shape_t>();
+		AActor* shape_actor = shape_entity.get<flecs::ue::entity_link_t>()->actor;
+		const shape_movement_params_t* shape_movement = shape_entity.get<shape_movement_params_t>();
+
+		const grid_t* grid = flecs_world.get<grid_t>();
+		const player_t* player = flecs_world.get<player_t>();
+		float min_height = player->player->GetActorLocation().Z + grid->grid_height / 2.0;
+
+		for (AActor* cell_actor: shape->cell_actor)
+		{
+			FVector relative_offset = shape_actor->GetActorLocation() - cell_actor->GetActorLocation();
+			FVector cell_goal_location = shape_movement->goal - relative_offset;
+			if (cell_goal_location.Z >= min_height)
+				return true;
+		}
+
+		return false;
 	}
 
 	FVector find_border_cell(const grid_t* grid, FVector location, FVector offset)

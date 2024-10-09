@@ -16,4 +16,7 @@ class SLEEPYMILL_API UCommonFunctionLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable)
 	static float get_current_score(UObject* world_context);
+	
+	UFUNCTION(BlueprintCallable)
+	static bool is_game_over(UObject* world_context);
 };
